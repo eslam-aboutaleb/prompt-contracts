@@ -1,0 +1,150 @@
+[
+  {
+    "id": "input_add_optional_property_is_compatible",
+    "direction": "input",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question"],
+      "properties": {
+        "question": {"type": "string", "minLength": 1, "maxLength": 100}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question"],
+      "properties": {
+        "question": {"type": "string", "minLength": 1, "maxLength": 100},
+        "context": {"type": "string", "maxLength": 500}
+      }
+    },
+    "expected_status": "compatible",
+    "expected_rule_id": "PC_COMPAT_OPTIONAL_PROPERTY_ADDED"
+  },
+  {
+    "id": "input_add_required_property_is_breaking",
+    "direction": "input",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question"],
+      "properties": {
+        "question": {"type": "string"}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "role"],
+      "properties": {
+        "question": {"type": "string"},
+        "role": {"type": "string"}
+      }
+    },
+    "expected_status": "breaking",
+    "expected_rule_id": "PC_COMPAT_REQUIRED_PROPERTY_ADDED"
+  },
+  {
+    "id": "output_add_required_property_is_compatible",
+    "direction": "output",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["answer"],
+      "properties": {
+        "answer": {"type": "string"}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["answer", "confidence"],
+      "properties": {
+        "answer": {"type": "string"},
+        "confidence": {"type": "number"}
+      }
+    },
+    "expected_status": "compatible",
+    "expected_rule_id": "PC_COMPAT_REQUIRED_PROPERTY_ADDED"
+  },
+  {
+    "id": "output_remove_required_property_is_breaking",
+    "direction": "output",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answer", "confidence"],
+      "properties": {
+        "answer": {"type": "string"},
+        "confidence": {"type": "number"}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answer"],
+      "properties": {
+        "answer": {"type": "string"}
+      }
+    },
+    "expected_status": "breaking",
+    "expected_rule_id": "PC_COMPAT_REQUIRED_PROPERTY_REMOVED"
+  },
+  {
+    "id": "input_enum_widened_is_compatible",
+    "direction": "input",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier"],
+      "properties": {
+        "tier": {"type": "string", "enum": ["free", "pro"]}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier"],
+      "properties": {
+        "tier": {"type": "string", "enum": ["free", "pro", "enterprise"]}
+      }
+    },
+    "expected_status": "compatible",
+    "expected_rule_id": "PC_COMPAT_ENUM_WIDENED"
+  },
+  {
+    "id": "output_enum_widened_is_breaking",
+    "direction": "output",
+    "old_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier"],
+      "properties": {
+        "tier": {"type": "string", "enum": ["free", "pro"]}
+      }
+    },
+    "new_schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier"],
+      "properties": {
+        "tier": {"type": "string", "enum": ["free", "pro", "enterprise"]}
+      }
+    },
+    "expected_status": "breaking",
+    "expected_rule_id": "PC_COMPAT_ENUM_WIDENED"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topic_block", "notes_block"],
+  "properties": {
+    "topic_block": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "notes_block": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 32768
+    }
+  }
+}

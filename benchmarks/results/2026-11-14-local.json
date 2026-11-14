@@ -1,0 +1,53 @@
+{
+  "environment": {
+    "cold_load_iterations": 200,
+    "cpu_count": 10,
+    "dependencies": {
+      "jsonschema": "4.26.0",
+      "referencing": "0.37.0"
+    },
+    "fixture_bytes": {
+      "cold_bundle": 102400,
+      "loaded_catalog": 110053,
+      "output_json": 10240,
+      "rendered_messages": 10240
+    },
+    "iterations": 1000,
+    "machine": "arm64",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python_version": "3.12.12"
+  },
+  "metrics": {
+    "cold_load_100kib": {
+      "max_ms": 7.7235,
+      "mean_ms": 4.4565,
+      "min_ms": 3.8992,
+      "p50_ms": 4.2095,
+      "p95_ms": 5.7274,
+      "p99_ms": 7.3542
+    },
+    "peak_heap_mib": 0.5287,
+    "warm_render_10kib_10vars": {
+      "max_ms": 0.2638,
+      "mean_ms": 0.1564,
+      "min_ms": 0.1536,
+      "p50_ms": 0.1557,
+      "p95_ms": 0.1591,
+      "p99_ms": 0.166
+    },
+    "warm_validate_output_10kib_25props": {
+      "max_ms": 0.8695,
+      "mean_ms": 0.4936,
+      "min_ms": 0.4785,
+      "p50_ms": 0.4826,
+      "p95_ms": 0.555,
+      "p99_ms": 0.6594
+    }
+  },
+  "targets": {
+    "cold_load_p95_ms_max": 100.0,
+    "peak_heap_mib_max": 8.0,
+    "warm_render_p95_ms_max": 5.0,
+    "warm_validate_output_p95_ms_max": 2.0
+  }
+}

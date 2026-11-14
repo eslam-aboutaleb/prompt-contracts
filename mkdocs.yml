@@ -1,0 +1,40 @@
+site_name: prompt-contracts
+site_description: Explicit, versioned, immutable prompt contracts for LLM applications.
+site_url: https://github.com/eslam-aboutaleb/prompt-contracts
+repo_url: https://github.com/eslam-aboutaleb/prompt-contracts
+repo_name: eslam-aboutaleb/prompt-contracts
+
+theme:
+  name: readthedocs
+
+markdown_extensions:
+  - admonition
+  - tables
+  - fenced_code
+  - toc:
+      permalink: true
+
+nav:
+  - Overview: index.md
+  - Core Specification:
+      - Contract Format: contract-format.md
+      - Single-Pass Rendering: rendering.md
+      - Identity & Lockfiles: identity-and-locks.md
+      - Compatibility Analyzer: compatibility.md
+      - Errors & Privacy: errors-and-privacy.md
+  - Integrations:
+      - llm-gateway-sdk Adapter: integrations/gateway-sdk.md
+      - Promptfoo Evaluation Bridge: integrations/promptfoo.md
+      - Ace Your Interview Migration: integrations/ace-your-interview.md
+      - Job-Hunting Assistant Migration: integrations/job-hunting-assistant.md
+      - Framework Adapters: integrations/framework-adapters.md
+  - Operations:
+      - CI & Verification: operations/ci.md
+      - Release & Versioning Policy: operations/releases.md
+      - Rollback Runbook: operations/rollback.md
+  - Architecture Decisions:
+      - ADR-0001 Runtime Boundary: decisions/0001-runtime-boundary.md
+      - ADR-0002 Format & Renderer: decisions/0002-contract-format-and-renderer.md
+      - ADR-0003 Byte-Based Identity: decisions/0003-byte-based-identity.md
+      - ADR-0004 Schema Profile: decisions/0004-schema-profile.md
+      - ADR-0005 Directional Compatibility: decisions/0005-directional-compatibility.md

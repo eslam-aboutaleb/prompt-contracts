@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["answer", "evidence_ids", "needs_review"],
+  "properties": {
+    "answer": {"type": "string", "maxLength": 6000},
+    "evidence_ids": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {"type": "string", "maxLength": 128}
+    },
+    "needs_review": {"type": "boolean"}
+  }
+}

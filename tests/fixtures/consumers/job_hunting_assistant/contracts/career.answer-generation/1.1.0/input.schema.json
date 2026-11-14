@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question", "job_description", "user_profile"],
+  "properties": {
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "job_description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32768
+    },
+    "user_profile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32768
+    }
+  }
+}

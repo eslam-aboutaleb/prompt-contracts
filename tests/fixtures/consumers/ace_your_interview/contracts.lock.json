@@ -1,0 +1,18 @@
+{
+  "lock_format": 1,
+  "digest_algorithm": "pc-bundle-v1",
+  "contracts": [
+    {
+      "name": "study.topic-language-advisor",
+      "version": "1.0.0",
+      "path": "contracts/study.topic-language-advisor/1.0.0",
+      "bundle_digest": "sha256:846cebf975ea3808af2b0c8beab28f019d27373bd529ef9c8751823edc7fb482"
+    },
+    {
+      "name": "study.topic-language-advisor",
+      "version": "1.1.0",
+      "path": "contracts/study.topic-language-advisor/1.1.0",
+      "bundle_digest": "sha256:51471a09b69eae4913211954892d169498ac1e8fe7d13b5d3a7997628b7823fd"
+    }
+  ]
+}

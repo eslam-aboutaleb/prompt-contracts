@@ -1,0 +1,12 @@
+{
+  "lock_format": 1,
+  "digest_algorithm": "pc-bundle-v1",
+  "contracts": [
+    {
+      "name": "career.application-answer",
+      "version": "1.0.0",
+      "path": "contracts/career.application-answer/1.0.0",
+      "bundle_digest": "sha256:426281e21d0ae600e8bbaafc43baabda893f4962be2fc6114542fe8b79a8c1ed"
+    }
+  ]
+}

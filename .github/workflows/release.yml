@@ -1,0 +1,196 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rehearse; manual runs never publish
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  source:
+    name: Verify tagged source
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
+      - run: uv sync --frozen --all-groups
+      - name: Check tag identity and main ancestry
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: uv run --frozen python scripts/check_release.py --tag "$RELEASE_TAG" --verify-git
+      - name: Preserve trusted main catalog
+        run: uv run --frozen python scripts/verify_repository_contracts.py --baseline-ref origin/main
+
+  security:
+    needs: source
+    uses: eslam-aboutaleb/ci-workflows/.github/workflows/security.yml@cb10612004f98e6ec10158af72c4d0e1a044e436
+    with:
+      languages: '["python", "actions"]'
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      security-events: write
+
+  release-tests:
+    name: Tagged tests (${{ matrix.os }}, ${{ matrix.python }})
+    needs: source
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.11', '3.12', '3.13', '3.14']
+        include:
+          - os: macos-latest
+            python: '3.12'
+          - os: windows-latest
+            python: '3.12'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
+      - run: uv sync --frozen --all-groups --extra gateway
+      - run: uv run --frozen pytest --cov=prompt_contracts --cov-branch --cov-fail-under=90
+
+  validate-and-build:
+    name: Verify and build release artifacts
+    needs: source
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
+      - run: uv sync --frozen --all-groups --extra gateway
+      - name: Check runtime, contracts, docs and real offline evaluation
+        run: |
+          make ci-quality
+          make ci-generated
+          make ci-docs
+          make ci-promptfoo
+          uv run --frozen python scripts/check_dependency_support.py --mode floor
+          uv run --frozen python scripts/check_dependency_support.py --mode latest
+      - name: Build once and install those distributions
+        run: make ci-package
+      - name: Check artifact version and record checksums
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: uv run --frozen python scripts/check_release.py --tag "$RELEASE_TAG" --dist-dir dist --write-checksums
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: release-dists
+          path: dist/
+          if-no-files-found: error
+          retention-days: 90
+
+  testpypi:
+    name: Verify candidate on TestPyPI
+    needs: [release-tests, validate-and-build, security]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: release-dists
+          path: dist/
+      - run: cd dist && sha256sum --check SHA256SUMS.txt
+      - name: Prepare distribution-only upload directory
+        run: |
+          mkdir upload
+          cp dist/*.whl dist/*.tar.gz upload/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: upload/
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
+      - name: Verify downloaded index bytes and a fresh installation
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python scripts/verify_testpypi.py --version "${RELEASE_TAG#v}" --dist-dir dist
+
+  publish-pypi:
+    name: Publish verified bytes to PyPI
+    needs: testpypi
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: release-dists
+          path: dist/
+      - run: cd dist && sha256sum --check SHA256SUMS.txt
+      - name: Prepare distribution-only upload directory
+        run: |
+          mkdir upload
+          cp dist/*.whl dist/*.tar.gz upload/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          packages-dir: upload/
+
+  github-release:
+    name: Attach verified release artifacts
+    needs: publish-pypi
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: release-dists
+          path: dist/
+      - run: cd dist && sha256sum --check SHA256SUMS.txt
+      - name: Create release with tested distributions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" dist/* --verify-tag --generate-notes
