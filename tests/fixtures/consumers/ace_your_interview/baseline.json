@@ -1,0 +1,24 @@
+{
+  "active_version": "1.0.0",
+  "canary_version": "1.1.0",
+  "contract_name": "study.topic-language-advisor",
+  "expected_messages_v1": [
+    {
+      "content": "You are an expert technical curriculum advisor. You analyze technical study topics and recommend the best programming languages for learning them.\n",
+      "role": "system"
+    },
+    {
+      "content": "Analyze the following study topic and recommend suitable programming languages:\n\n<untrusted_content source=\"topic_title\">\nDynamic Programming & Memoization\n</untrusted_content>\n\n\nAdditional study notes / context:\n<untrusted_content source=\"notes\">\nFocus on recursion trees, state transitions, and iterative tabulation.\n</untrusted_content>\n\nRespond with a JSON object matching this exact schema:\n{{\n  \"recommended_languages\": [\"lang1\", \"lang2\"],\n  \"primary_language\": \"lang1\",\n  \"reasoning\": \"Brief explanation (1-2 sentences) of why these languages fit this topic.\",\n  \"topic_type\": \"language_specific\" | \"multi_language\" | \"concept_only\" | \"framework_specific\"\n}}\n",
+      "role": "user"
+    }
+  ],
+  "inputs": {
+    "notes_block": "\n\nAdditional study notes / context:\n<untrusted_content source=\"notes\">\nFocus on recursion trees, state transitions, and iterative tabulation.\n</untrusted_content>",
+    "topic_block": "<untrusted_content source=\"topic_title\">\nDynamic Programming & Memoization\n</untrusted_content>"
+  },
+  "source_repo": "ace-your-interview",
+  "valid_output": "{\"recommended_languages\": [\"Python\", \"C++\", \"Java\"], \"primary_language\": \"Python\", \"reasoning\": \"Python keeps state transition code concise while C++ and Java are standard for timed algorithmic interviews.\", \"topic_type\": \"multi_language\"}",
+  "fixture_kind": "synthetic_design_example",
+  "capture_method": "hand_authored_not_captured_from_application",
+  "inventory_source_commit": "583ff0be33de5befb99a3d66e036b4260b878bf0"
+}

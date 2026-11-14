@@ -1,0 +1,18 @@
+format_version = 1
+name = "career.application-answer"
+version = "1.0.0"
+description = "Draft an answer using candidate-provided evidence."
+renderer = "placeholders-v1"
+input_schema = "input.schema.json"
+
+[output]
+mode = "json"
+schema = "output.schema.json"
+
+[[messages]]
+role = "system"
+file = "system.md"
+
+[[messages]]
+role = "user"
+file = "user.md"

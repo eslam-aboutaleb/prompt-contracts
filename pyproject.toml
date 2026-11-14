@@ -1,0 +1,175 @@
+[build-system]
+requires = ["hatchling>=1.24.0,<1.28.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prompt-contracts"
+version = "0.2.0"
+description = "Explicit, versioned, immutable prompt contracts with strict schema validation, single-pass rendering, compatibility analysis, and evaluation parity."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Eslam Aboutaleb" },
+]
+maintainers = [
+    { name = "Eslam Aboutaleb" },
+]
+keywords = [
+    "llm",
+    "prompts",
+    "contracts",
+    "jsonschema",
+    "compatibility",
+    "evaluation",
+    "promptfoo",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "jsonschema>=4.23.0,<5.0.0",
+    "referencing>=0.35.0,<1.0.0",
+]
+
+[project.optional-dependencies]
+gateway = [
+    "llm-gateway-sdk>=0.1.0,<1.0.0",
+]
+
+[project.scripts]
+prompt-contracts = "prompt_contracts.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/eslam-aboutaleb/prompt-contracts"
+Repository = "https://github.com/eslam-aboutaleb/prompt-contracts"
+Issues = "https://github.com/eslam-aboutaleb/prompt-contracts/issues"
+Documentation = "https://github.com/eslam-aboutaleb/prompt-contracts/tree/main/docs"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0,<10.0.0",
+    "pytest-cov>=5.0.0,<8.0.0",
+    "hypothesis>=6.100.0,<7.0.0",
+    "ruff>=0.6.0,<1.0.0",
+    "mypy>=1.10.0,<2.0.0",
+    "types-jsonschema>=4.23.0,<5.0.0",
+    "build>=1.2.0,<2.0.0",
+    "twine>=5.0.0,<7.0.0",
+    "mkdocs>=1.6.0,<2.0.0",
+    "llm-gateway-sdk>=0.1.0,<1.0.0",
+]
+
+[tool.uv.sources]
+llm-gateway-sdk = { git = "https://github.com/eslam-aboutaleb/llm-gateway-sdk.git", rev = "3da8548e528ec6ed404ef2b115f0568db83fa7bd" }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prompt_contracts"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"schemas/contract-manifest.schema.json" = "prompt_contracts/schemas/contract-manifest.schema.json"
+"schemas/contract-lock.schema.json" = "prompt_contracts/schemas/contract-lock.schema.json"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/schemas",
+    "/tests",
+    "/docs",
+    "/examples",
+    "/benchmarks",
+    "/scripts",
+    "/README.md",
+    "/LICENSE",
+    "/CHANGELOG.md",
+    "/SECURITY.md",
+    "/CONTRIBUTING.md",
+    "/pyproject.toml",
+    "/mkdocs.yml",
+    "/Makefile",
+]
+exclude = [
+    "/tasks/",
+    "/docs/operations/",
+    "/docs/decisions/",
+    "/docs/integrations/ace-your-interview.md",
+    "/docs/integrations/job-hunting-assistant.md",
+    "/tools/promptfoo/node_modules",
+    "/tools/promptfoo/.promptfoo",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = ["-ra", "--strict-markers", "-m", "not live and not promptfoo"]
+markers = [
+    "promptfoo: real Node CLI integration, required in the dedicated Promptfoo job",
+    "live: opt-in live evaluation or gateway tests requiring external credentials",
+]
+
+[tool.coverage.run]
+source = ["prompt_contracts"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 90
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests", "examples", "scripts", "benchmarks"]
+extend-exclude = ["tools/promptfoo/node_modules"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "B",
+    "C4",
+    "UP",
+    "SIM",
+    "S",
+    "RET",
+    "PIE",
+    "ARG",
+    "PTH",
+    "RUF",
+]
+ignore = [
+    "S101",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S108", "S603", "S607", "ARG001", "ARG002", "ARG005"]
+"examples/**" = ["S105", "S106"]
+"scripts/**" = ["S603", "S607"]
+"benchmarks/**" = ["S311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+mypy_path = ["src"]
+files = ["src/prompt_contracts", "tests", "examples", "scripts", "benchmarks"]

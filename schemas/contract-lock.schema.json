@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/eslam-aboutaleb/prompt-contracts/schemas/contract-lock.schema.json",
+  "title": "Prompt Contract Lockfile",
+  "description": "Reference schema for contracts.lock.json (lock_format = 1).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lock_format",
+    "digest_algorithm",
+    "contracts"
+  ],
+  "properties": {
+    "lock_format": {
+      "type": "integer",
+      "const": 1
+    },
+    "digest_algorithm": {
+      "type": "string",
+      "enum": [
+        "pc-bundle-v1"
+      ]
+    },
+    "contracts": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "version",
+          "path",
+          "bundle_digest"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+          },
+          "version": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 64,
+            "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "bundle_digest": {
+            "type": "string",
+            "minLength": 71,
+            "maxLength": 71,
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

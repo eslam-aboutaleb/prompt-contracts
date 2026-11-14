@@ -1,0 +1,35 @@
+site_name: prompt-contracts
+site_description: Explicit, versioned, immutable prompt contracts for LLM applications.
+site_url: https://github.com/eslam-aboutaleb/prompt-contracts
+repo_url: https://github.com/eslam-aboutaleb/prompt-contracts
+repo_name: eslam-aboutaleb/prompt-contracts
+
+theme:
+  name: readthedocs
+
+markdown_extensions:
+  - admonition
+  - tables
+  - fenced_code
+  - toc:
+      permalink: true
+
+exclude_docs: |
+  /operations/
+  /decisions/
+  /integrations/ace-your-interview.md
+  /integrations/job-hunting-assistant.md
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Integrations:
+      - llm-gateway-sdk: integrations/gateway-sdk.md
+      - Other Clients and Frameworks: integrations/framework-adapters.md
+      - Promptfoo: integrations/promptfoo.md
+  - Reference:
+      - Contract Format: contract-format.md
+      - Template Rendering: rendering.md
+      - Lockfiles: identity-and-locks.md
+      - Schema Compatibility: compatibility.md
+      - Errors and Privacy: errors-and-privacy.md

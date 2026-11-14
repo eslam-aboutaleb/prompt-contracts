@@ -1,0 +1,23 @@
+description: "Synthetic offline evaluation parity suite for career.application-answer@1.0.0"
+
+prompts:
+  - "__PROMPT_CONTRACTS_SENTINEL__"
+
+providers:
+  - id: file://provider.py
+    label: prompt-contracts-production-renderer
+    config:
+      contracts_root: "."
+      lock_file: "contracts.lock.json"
+      contract_ref: "career.application-answer@1.0.0"
+      mode: "offline"
+      model_alias: "offline-scripted"
+      dataset_revision: "synthetic-v1"
+      schema_mode: "strict_json_schema"
+      include_rendered_prompt: true # Synthetic data only; verifies real CLI parity
+
+evaluateOptions:
+  cache: false
+  maxConcurrency: 1
+
+tests: file://cases.yaml

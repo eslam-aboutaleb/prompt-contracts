@@ -1,0 +1,62 @@
+name: Maintenance
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: maintenance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-scan:
+    uses: eslam-aboutaleb/ci-workflows/.github/workflows/security.yml@cb10612004f98e6ec10158af72c4d0e1a044e436
+    with:
+      languages: '["python", "actions"]'
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      security-events: write
+
+  audit-and-benchmarks:
+    name: Dependency Audit & Performance Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups
+
+      - name: Audit the locked Python dependency graph
+        run: uv audit --locked
+
+      - name: Check minimum and latest dependency support
+        run: |
+          uv run --frozen python scripts/check_dependency_support.py --mode floor
+          uv run --frozen python scripts/check_dependency_support.py --mode latest
+
+      - name: Record runtime benchmarks
+        run: uv run --frozen python benchmarks/runtime.py --iterations 1000 > benchmark.json
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: benchmark-report
+          path: benchmark.json
+          retention-days: 90

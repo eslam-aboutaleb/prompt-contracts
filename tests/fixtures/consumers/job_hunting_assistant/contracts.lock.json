@@ -1,0 +1,18 @@
+{
+  "lock_format": 1,
+  "digest_algorithm": "pc-bundle-v1",
+  "contracts": [
+    {
+      "name": "career.answer-generation",
+      "version": "1.0.0",
+      "path": "contracts/career.answer-generation/1.0.0",
+      "bundle_digest": "sha256:bcdc0557be63aa776829bf82078432a6fde51f4d4d8d94a98f59436d242e5bc4"
+    },
+    {
+      "name": "career.answer-generation",
+      "version": "1.1.0",
+      "path": "contracts/career.answer-generation/1.1.0",
+      "bundle_digest": "sha256:5f2eae4d83eeb408f323c96792155ef84962fc9cb4f60dd139477384ed11a50f"
+    }
+  ]
+}

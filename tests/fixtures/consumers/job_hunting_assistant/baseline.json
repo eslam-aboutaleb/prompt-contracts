@@ -1,0 +1,21 @@
+{
+  "active_version": "1.0.0",
+  "canary_version": "1.1.0",
+  "contract_name": "career.answer-generation",
+  "expected_messages_v1": [
+    {
+      "content": "You are an expert career coach helping a candidate answer an application question.\nWrite a clear, concise, and compelling response grounded ONLY in the candidate's profile and tailored to the job description.\nDo not invent experience, metrics, or credentials not present in the profile.\n\nApplication Question:\nDescribe a backend reliability improvement you led.\n\nJob Description:\nSenior Backend Engineer owning Python microservices and LLM gateways.\n\nCandidate Profile:\nBuilt schema-enforced prompt contracts and reduced malformed LLM responses by 100%.\n\nRespond strictly in JSON matching the required schema with `answer` and `confidence` (0.0 to 1.0).\n",
+      "role": "user"
+    }
+  ],
+  "inputs": {
+    "job_description": "Senior Backend Engineer owning Python microservices and LLM gateways.",
+    "question": "Describe a backend reliability improvement you led.",
+    "user_profile": "Built schema-enforced prompt contracts and reduced malformed LLM responses by 100%."
+  },
+  "source_repo": "job-hunting-assistant",
+  "valid_output": "{\"answer\": \"I designed and rolled out deterministic schema-enforced prompt contracts across our Python backend services, eliminating unvalidated model outputs before downstream persistence.\", \"confidence\": 0.94}",
+  "fixture_kind": "synthetic_design_example",
+  "capture_method": "hand_authored_not_captured_from_application",
+  "inventory_source_commit": "4164e0db29850c30a78de5f78159497af2c32335"
+}
